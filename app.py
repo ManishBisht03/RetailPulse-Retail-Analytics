@@ -46,6 +46,9 @@ if file_path.exists():
             country_df = pd.read_csv(country_file)
             st.subheader("Recorded Sales by Country")
             st.dataframe(country_df, use_container_width=True)
+            if "Country" in country_df.columns and "Total_Sales" in country_df.columns:
+                country_df = country_df.sort_values("Total_Sales", ascending=False).head(10)
+                st.bar_chart(country_df.set_index("Country")[["Total_Sales"]])
 
         col1, col2 = st.columns(2)
         col1.metric(
