@@ -65,6 +65,10 @@ if file_path.exists():
                     customer_df = pd.read_csv(customer_file)
                     customer_df.columns = customer_df.columns.str.strip().str.lower()
                     st.subheader("Customer Analysis")
+                    customer_metric = st.selectbox(
+                    "Choose Customer Metric",
+                    ["total_sales", "total_quantity"]
+                    )
                     selected_customer = st.selectbox("Customer ID",
                     ["All Customers"] + customer_df["customer id"].astype(str).tolist())
                     st.dataframe(customer_df.head(10), use_container_width=True)
