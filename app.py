@@ -69,9 +69,9 @@ if file_path.exists():
                     ["All Customers"] + customer_df["customer id"].astype(str).tolist())
                     st.dataframe(customer_df.head(10), use_container_width=True)
                     if selected_customer != "All Customers":
-                    customer_df = customer_df[
-                    customer_df["customer id"].astype(str) == selected_customer
-                    ]
+                        customer_df = customer_df[
+                        customer_df["customer id"].astype(str) == selected_customer
+                        ]
                     if "customer id" in customer_df.columns and "total_sales" in customer_df.columns:
                         top_customers = customer_df.sort_values(
                             "total_sales", ascending=False
