@@ -63,13 +63,14 @@ if file_path.exists():
                 customer_file = Path("retailpulse_customer_summary.csv")
                 if customer_file.exists():
                     customer_df = pd.read_csv(customer_file)
+                    customer_df.columns = customer_df.columns.str.strip().str.lower()
                     st.subheader("Customer Analysis")
                     st.dataframe(customer_df.head(10), use_container_width=True)
-                    if "customer ID" in customer_df.columns and "total_sales" in customer_df.columns:
+                    if "customer id" in customer_df.columns and "total_sales" in customer_df.columns:
                         top_customers = customer_df.sort_values(
                             "total_sales", ascending=False
                         ).head(10)
-                        customer_chart = top_customers.set_index("customer ID")[["total_sales"]]
+                        customer_chart = top_customers.set_index("customer id")[["total_sales"]]
                         st.subheader("Top 10 Customers by Recorded Sales")
                         st.bar_chart(customer_chart)
 
