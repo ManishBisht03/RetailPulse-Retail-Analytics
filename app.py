@@ -25,6 +25,12 @@ if file_path.exists():
     st.subheader("Monthly Sales Summary")
 
     st.dataframe(df, use_container_width=True)
+        selected_months = st.multiselect(
+        "Filter by month",
+        options=sorted(df["Month"].astype(str).unique()),
+        default=sorted(df["Month"].astype(str).unique())
+    )
+    df = df[df["Month"].astype(str).isin(selected_months)]
 
     if "Total_Sales" in df.columns and "Month" in df.columns:
         df["Month"] = df["Month"].astype(str)
