@@ -54,6 +54,13 @@ if file_path.exists():
                 product_df = pd.read_csv(product_file)
                 st.subheader("Top 10 Products by Recorded Sales")
                 st.dataframe(product_df.head(10), use_container_width=True)
+                if "Description" in product_df.columns and "Total_Sales" in product_df.columns:
+                    top_products = product_df.sort_values(
+                        "Total_Sales", ascending=False
+                    ).head(10)
+                    st.bar_chart(
+                        top_products.set_index("Description")[["Total_Sales"]]
+                    )
 
         col1, col2 = st.columns(2)
         col1.metric(
