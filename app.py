@@ -58,8 +58,8 @@ if file_path.exists():
                     top_products = product_df.sort_values(
                         "Total_Sales", ascending=False
                     ).head(10)
-                    st.bar_chart(
-                        top_products.set_index("Description")[["Total_Sales"]]
+                    product_chart = top_products.set_index("Description")[["Total_Sales"]]
+                    st.bar_chart(product_chart)
                 customer_file = Path("retailpulse_customer_summary.csv")
                 if customer_file.exists():
                     customer_df = pd.read_csv(customer_file)
