@@ -60,6 +60,11 @@ if file_path.exists():
                     ).head(10)
                     st.bar_chart(
                         top_products.set_index("Description")[["Total_Sales"]]
+                customer_file = Path("retailpulse_customer_summary.csv")
+                if customer_file.exists():
+                    customer_df = pd.read_csv(customer_file)
+                    st.subheader("Customer Analysis")
+                    st.dataframe(customer_df.head(10), use_container_width=True)
                     )
 
         col1, col2 = st.columns(2)
