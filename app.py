@@ -80,7 +80,7 @@ if file_path.exists():
                         top_customers = customer_df.sort_values(
                         customer_metric, ascending=False
                         ).head(10)
-                        customer_chart = top_customers.set_index("customer id")[["total_sales"]]
+                        customer_chart = top_customers.set_index("customer id")[[customer_metric]]
                         st.subheader("Top 10 Customers by Recorded Sales")
                         st.bar_chart(customer_chart)
 
