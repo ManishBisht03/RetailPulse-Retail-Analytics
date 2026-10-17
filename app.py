@@ -68,6 +68,9 @@ if file_path.exists():
                     st.metric("Customers Displayed",
                     customer_df["customer id"].nunique()
                     )
+                    st.metric("Total Recorded Sales",
+                    f"{customer_df['total_sales'].sum():,.2f}"
+                    )
                     customer_metric = st.selectbox(
                     "Choose Customer Metric",
                     ["total_sales", "total_quantity"]
