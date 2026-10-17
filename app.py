@@ -34,7 +34,7 @@ if file_path.exists():
         chart_data = df.set_index("Month")[["Total_Sales"]]
         st.line_chart(chart_data)
         st.subheader("Monthly Sales Comparison")
-st.bar_chart(chart_data)
+        st.bar_chart(chart_data)
 
         col1, col2 = st.columns(2)
         col1.metric(
