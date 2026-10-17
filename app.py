@@ -65,6 +65,10 @@ if file_path.exists():
                     customer_df = pd.read_csv(customer_file)
                     customer_df.columns = customer_df.columns.str.strip().str.lower()
                     st.subheader("Customer Analysis")
+                    if selected_customer != "All Customers":
+                        customer_df = customer_df[
+                        customer_df["customer id"].astype(str) == selected_customer
+                        ]
                     st.metric("Customers Displayed",
                     customer_df["customer id"].nunique()
                     )
@@ -81,10 +85,7 @@ if file_path.exists():
                     selected_customer = st.selectbox("Customer ID",
                     ["All Customers"] + customer_df["customer id"].astype(str).tolist())
                     st.dataframe(customer_df.head(10), use_container_width=True)
-                    if selected_customer != "All Customers":
-                        customer_df = customer_df[
-                        customer_df["customer id"].astype(str) == selected_customer
-                        ]
+                    
                     if "customer id" in customer_df.columns and "total_sales" in customer_df.columns:
                         top_customers = customer_df.sort_values(
                         customer_metric, ascending=False
