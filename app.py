@@ -66,9 +66,9 @@ if file_path.exists():
                     customer_df.columns = customer_df.columns.str.strip().str.lower()
                     st.subheader("Customer Analysis")
                     if selected_customer != "All Customers":
-                    customer_df = customer_df[
-                    customer_df["customer id"].astype(str) == selected_customer
-                    ]
+                        customer_df = customer_df[
+                        customer_df["customer id"].astype(str) == selected_customer
+                        ]
                     st.metric("Customers Displayed",
                     customer_df["customer id"].nunique()
                     )
