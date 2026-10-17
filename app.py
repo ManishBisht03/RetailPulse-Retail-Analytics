@@ -41,6 +41,11 @@ if file_path.exists():
         st.line_chart(chart_data)
         st.subheader("Monthly Sales Comparison")
         st.bar_chart(chart_data)
+        country_file = Path("retailpulse_country_summary.csv")
+        if country_file.exists():
+            country_df = pd.read_csv(country_file)
+            st.subheader("Recorded Sales by Country")
+            st.dataframe(country_df, use_container_width=True)
 
         col1, col2 = st.columns(2)
         col1.metric(
