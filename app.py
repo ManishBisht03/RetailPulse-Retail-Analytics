@@ -78,7 +78,7 @@ if file_path.exists():
                         ]
                     if "customer id" in customer_df.columns and "total_sales" in customer_df.columns:
                         top_customers = customer_df.sort_values(
-                            "total_sales", ascending=False
+                        customer_metric, ascending=False
                         ).head(10)
                         customer_chart = top_customers.set_index("customer id")[["total_sales"]]
                         st.subheader("Top 10 Customers by Recorded Sales")
