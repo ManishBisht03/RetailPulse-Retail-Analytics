@@ -65,7 +65,7 @@ if file_path.exists():
                     customer_df = pd.read_csv(customer_file)
                     st.subheader("Customer Analysis")
                     st.dataframe(customer_df.head(10), use_container_width=True)
-                    )
+                    
 
         col1, col2 = st.columns(2)
         col1.metric(
