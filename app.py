@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 from pathlib import Path
@@ -10,59 +11,47 @@ st.set_page_config(
 
 st.title("RetailPulse – Retail Sales & Customer Analytics")
 st.write(
-    "An interactive overview of retail transactions, "
-    "product performance, and customer purchasing behaviour."
+    "Explore retail sales trends using the analysed "
+    "Online Retail II dataset."
 )
 
-file_path = Path("retailpulse_analysis_ready.csv")
+file_path = Path("retailpulse_monthly_summary.csv")
 
 if file_path.exists():
     df = pd.read_csv(file_path)
 
-    st.subheader("Dataset Overview")
+    st.success("Monthly sales dataset connected successfully!")
 
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Transaction Rows", f"{len(df):,}")
+    st.subheader("Monthly Sales Summary")
 
-    if "Invoice" in df.columns:
-        col2.metric("Unique Invoices", f"{df['Invoice'].nunique():,}")
+    st.dataframe(df, use_container_width=True)
 
-    if "Country" in df.columns:
-        col3.metric("Countries", f"{df['Country'].nunique():,}")
+    if "Total_Sales" in df.columns and "Month" in df.columns:
+        df["Month"] = df["Month"].astype(str)
+        df = df.sort_values("Month")
 
-    if "Sales" in df.columns and "Country" in df.columns:
-        st.subheader("Recorded Sales by Country")
-        sales = (
-            df.groupby("Country")["Sales"]
-            .sum()
-            .sort_values(ascending=False)
-            .head(10)
+        st.subheader("Monthly Recorded Sales Trend")
+        chart_data = df.set_index("Month")[["Total_Sales"]]
+        st.line_chart(chart_data)
+
+        col1, col2 = st.columns(2)
+        col1.metric(
+            "Months Analysed",
+            f"{df['Month'].nunique():,}"
         )
-        st.bar_chart(sales)
-
-    st.subheader("Dataset Preview")
-    st.dataframe(df.head(100), use_container_width=True)
+        col2.metric(
+            "Total Recorded Sales",
+            f"{df['Total_Sales'].sum():,.2f}"
+        )
+    else:
+        st.warning(
+            "Expected columns Month and Total_Sales were not found. "
+            "Check the column names in the uploaded CSV."
+        )
 
 else:
-    st.info(
-        "The source dataset is not connected to this web app yet."
+    st.error(
+        "Monthly summary file not found. "
+        "Check that retailpulse_monthly_summary.csv "
+        "is uploaded to the repository root."
     )
-
-    st.subheader("Project Highlights")
-
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Transaction Rows Analysed", "1.03M")
-    col2.metric("Unique Invoices", "53.63K")
-    col3.metric("Countries", "43")
-
-    st.subheader("Project Scope")
-    st.markdown("""
-    - Retail sales and transaction analysis
-    - Product performance analysis
-    - Customer purchasing behaviour and segmentation
-    - Country-level sales comparisons
-    - Interactive Power BI reporting
-
-    **Note:** The figures above summarize the completed analysis.
-    The original dataset is not currently connected to this web app.
-    """)
