@@ -65,6 +65,9 @@ if file_path.exists():
                     customer_df = pd.read_csv(customer_file)
                     customer_df.columns = customer_df.columns.str.strip().str.lower()
                     st.subheader("Customer Analysis")
+                    st.metric("Customers Displayed",
+                    customer_df["customer id"].nunique()
+                    )
                     customer_metric = st.selectbox(
                     "Choose Customer Metric",
                     ["total_sales", "total_quantity"]
