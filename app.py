@@ -254,6 +254,124 @@ else:
 st.divider()
 
 # --------------------------------------------------
+# BUSINESS KPIs AND INSIGHTS
+# --------------------------------------------------
+st.header("Business KPIs & Insights")
+
+if len(monthly_df) >= 2:
+    monthly_sorted = monthly_df.sort_values("Month").reset_index(
+        drop=True
+    )
+
+    latest_month = monthly_sorted.iloc[-1]
+    previous_month = monthly_sorted.iloc[-2]
+
+    latest_sales = float(latest_month["Total_Sales"])
+    previous_sales = float(previous_month["Total_Sales"])
+
+    if previous_sales != 0:
+        sales_growth = (
+            (latest_sales - previous_sales)
+            / abs(previous_sales)
+        ) * 100
+        growth_text = f"{sales_growth:+.2f}%"
+    else:
+        sales_growth = None
+        growth_text = "N/A"
+
+    best_month = monthly_sorted.loc[
+        monthly_sorted["Total_Sales"].idxmax()
+    ]
+
+    lowest_month = monthly_sorted.loc[
+        monthly_sorted["Total_Sales"].idxmin()
+    ]
+
+    first_sales = float(monthly_sorted.iloc[0]["Total_Sales"])
+
+    if latest_sales > first_sales:
+        trend_text = "Increasing"
+    elif latest_sales < first_sales:
+        trend_text = "Decreasing"
+    else:
+        trend_text = "Stable"
+
+    kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+
+    kpi1.metric(
+        "Latest Month Sales",
+        format_sales(latest_sales),
+        help=latest_month["Month"].strftime("%B %Y")
+    )
+
+    kpi2.metric(
+        "Month-over-Month Growth",
+        growth_text,
+        help="Compared with the previous available month."
+    )
+
+    kpi3.metric(
+        "Best Sales Month",
+        best_month["Month"].strftime("%b %Y"),
+        help=f"Recorded sales: {format_sales(best_month['Total_Sales'])}"
+    )
+
+    kpi4.metric(
+        "Lowest Sales Month",
+        lowest_month["Month"].strftime("%b %Y"),
+        help=f"Recorded sales: {format_sales(lowest_month['Total_Sales'])}"
+    )
+
+    st.subheader("Business Insights")
+
+    if sales_growth is not None:
+        if sales_growth > 0:
+            st.success(
+                f"Sales increased by {sales_growth:.2f}% compared "
+                "with the previous available month."
+            )
+        elif sales_growth < 0:
+            st.warning(
+                f"Sales decreased by {abs(sales_growth):.2f}% "
+                "compared with the previous available month."
+            )
+        else:
+            st.info(
+                "Sales were unchanged compared with the previous "
+                "available month."
+            )
+    else:
+        st.info(
+            "Month-over-month growth cannot be calculated because "
+            "the previous month's sales were zero."
+        )
+
+    st.write(
+        f"**Overall direction:** {trend_text}. "
+        "This compares the latest month's sales with the first "
+        "month in the available dataset."
+    )
+
+    st.write(
+        f"**Highest-performing month:** "
+        f"{best_month['Month'].strftime('%B %Y')}, with recorded "
+        f"sales of {format_sales(best_month['Total_Sales'])}."
+    )
+
+    st.caption(
+        "These insights use the complete monthly summary dataset, "
+        "not the date range or Month filter selected below. "
+        "Negative recorded sales can occur because of returns "
+        "or adjustments."
+    )
+
+else:
+    st.info(
+        "At least two months of valid sales data are required "
+        "to calculate these business insights."
+    )
+
+# --------------------------------------------------
 # 5. MONTHLY SALES TREND AND FORECAST
 # --------------------------------------------------
 st.header("Monthly Sales Trend & Demand Forecasting")
