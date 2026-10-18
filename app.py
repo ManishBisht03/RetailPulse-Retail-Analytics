@@ -152,16 +152,20 @@ if file_path.exists():
                 "data may change the forecast."
             )
 
+            
             st.subheader("Forecast Values")
+            forecast_table = pd.DataFrame({
+                "Forecast Month": future_dates,
+                "Estimated Sales": future_sales
+            })
+
             st.dataframe(
-                future_line[["Month", "Forecast Sales"]].rename(
-                    columns={
-                        "Month": "Forecast Month",
-                        "Total_Sales": "Estimated Sales"
-                    }
-                ).style.format({"Estimated Sales": "{:,.2f}"}),
+                forecast_table.style.format({
+                    "Estimated Sales": "{:,.2f}"
+                }),
                 use_container_width=True
             )
+
         else:
             st.info(
                 "At least two valid historical months are needed "
