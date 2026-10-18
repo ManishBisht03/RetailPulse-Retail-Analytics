@@ -194,6 +194,31 @@ if file_path.exists():
                         "Historical Test MAE",
                         f"{mae:,.2f}"
                     )
+                    # Calculate MAPE, excluding zero actual sales
+                    actual_values = test_df["Total_Sales"].to_numpy()
+
+                    nonzero_mask = actual_values != 0
+
+                    if np.any(nonzero_mask):
+                        mape = np.mean(
+                            np.abs(
+                                (
+                                    actual_values[nonzero_mask]
+                                    - test_predictions[nonzero_mask]
+                                )
+                                / actual_values[nonzero_mask]
+                            )
+                        ) * 100
+
+                        st.metric(
+                            "Historical Test MAPE",
+                            f"{mape:.2f}%"
+                        )
+                    else:
+                        st.info(
+                            "MAPE cannot be calculated because all "
+                            "actual sales in the test period are zero."
+                        )
 
                     st.caption(
                         f"MAE evaluated on the most recent {test_size} "
