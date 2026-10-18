@@ -140,6 +140,7 @@ if file_path.exists():
                     forecast_df["Total_Sales"],
                     1
                 )
+                
 
                 future_numbers = np.arange(
                     len(forecast_df),
@@ -158,6 +159,52 @@ if file_path.exists():
                     0,
                     slope * future_numbers + intercept
                 )
+                # Historical Forecast Accuracy using MAE
+                st.subheader("Historical Forecast Accuracy")
+
+                if len(forecast_df) >= 5:
+                    test_size = min(
+                        3,
+                        max(1, len(forecast_df) // 5)
+                    )
+
+                    train_df = forecast_df.iloc[:-test_size].copy()
+                    test_df = forecast_df.iloc[-test_size:].copy()
+
+                    train_slope, train_intercept = np.polyfit(
+                        train_df["Month_Number"],
+                        train_df["Total_Sales"],
+                        1
+                    )
+
+                    test_predictions = np.maximum(
+                        0,
+                        train_slope * test_df["Month_Number"].to_numpy()
+                        + train_intercept
+                    )
+
+                    mae = np.mean(
+                        np.abs(
+                            test_df["Total_Sales"].to_numpy()
+                            - test_predictions
+                        )
+                    )
+
+                    st.metric(
+                        "Historical Test MAE",
+                        f"{mae:,.2f}"
+                    )
+
+                    st.caption(
+                        f"MAE evaluated on the most recent {test_size} "
+                        "historical month(s) held out from model fitting. "
+                        "Lower MAE indicates closer predictions."
+                    )
+                else:
+                    st.info(
+                        "At least 5 historical months are needed "
+                        "to evaluate forecast accuracy."
+                    )
 
                 # Historical line: values only for historical months
                 historical_chart = forecast_df[
