@@ -753,12 +753,12 @@ else:
             key="product_filter"
             )
 
-           if "All" in selected_products:
-               filtered_product_plot = product_plot.copy()
-           else:
-               filtered_product_plot = product_plot[
-               product_plot["Product"].isin(selected_products)
-           ]
+            if "All" in selected_products:
+                filtered_product_plot = product_plot.copy()
+            else:
+                filtered_product_plot = product_plot[
+                product_plot["Product"].isin(selected_products)
+            ]
             product_top_n = st.slider(
             "Number of products to display",
             min_value=1,
