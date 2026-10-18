@@ -901,48 +901,77 @@ else:
                 key="customer_sales_chart"
             )
 
-            # Customer selector.
-            customer_ids = customer_plot[
-                customer_id_col
-            ].astype(str).tolist()
+            # Customer selector with an All option.
+            customer_ids = (
+                customer_plot[customer_id_col]
+                .astype(str)
+                .tolist()
+            )
 
             selected_customer = st.selectbox(
                 "Select a customer to inspect",
-                options=customer_ids,
+                options=["All"] + customer_ids,
                 key="selected_customer"
-                )
-
-            selected_row = customer_plot[
-                customer_plot[customer_id_col].astype(str)
-                == selected_customer
-            ].iloc[0]
+            )
 
             st.subheader("Selected Customer Details")
 
-            detail_col1, detail_col2 = st.columns(2)
+            if selected_customer == "All":
+                st.info("Showing summary for all identified customers.")
 
-            detail_col1.metric(
-                "Customer ID",
-                selected_customer
-            )
-            detail_col2.metric(
-                "Recorded Sales",
-                format_sales(selected_row[customer_sales_col])
-            )
+                detail_col1, detail_col2 = st.columns(2)
 
-            if customer_quantity_col is not None:
-                quantity_value = selected_row[
-                    customer_quantity_col
-                ]
+                detail_col1.metric(
+                    "Identified Customers",
+                    f"{customer_plot[customer_id_col].nunique():,}"
+                )
 
-                st.metric(
-                    "Recorded Quantity",
-                    (
-                        f"{quantity_value:,.0f}"
-                        if pd.notna(quantity_value)
-                        else "N/A"
+                detail_col2.metric(
+                    "Total Customer Sales",
+                    format_sales(
+                        customer_plot[customer_sales_col].sum()
                     )
                 )
+
+                if customer_quantity_col is not None:
+                    st.metric(
+                        "Total Recorded Quantity",
+                        f"{customer_plot[customer_quantity_col].sum():,.0f}"
+                    )
+
+            else:
+                selected_row = customer_plot[
+                    customer_plot[customer_id_col].astype(str)
+                    == selected_customer
+                ].iloc[0]
+
+                detail_col1, detail_col2 = st.columns(2)
+
+                detail_col1.metric(
+                    "Customer ID",
+                    selected_customer
+                )
+
+                detail_col2.metric(
+                    "Recorded Sales",
+                    format_sales(
+                        selected_row[customer_sales_col]
+                    )
+                )
+
+                if customer_quantity_col is not None:
+                    quantity_value = selected_row[
+                        customer_quantity_col
+                    ]
+
+                    st.metric(
+                        "Recorded Quantity",
+                        (
+                            f"{quantity_value:,.0f}"
+                            if pd.notna(quantity_value)
+                            else "N/A"
+                        )
+                    )
 
             st.subheader("Customer Summary Table")
             st.dataframe(
