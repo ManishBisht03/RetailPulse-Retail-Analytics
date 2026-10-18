@@ -620,16 +620,28 @@ else:
                 "Top Country",
                 str(country_plot.iloc[0]["Country"])
             )
-
+            country_options = ["All"] + country_plot["Country"].tolist()
+            selected_countries = st.multiselect(
+            "Select Country",
+            options=country_options,
+            default=["All"],
+            key="country_filter"
+            )
+            if "All" in selected_countries:
+                filtered_country_plot = country_plot.copy()
+            else:
+                filtered_country_plot = country_plot[
+                country_plot["Country"].isin(selected_countries)
+                ]
             country_top_n = st.slider(
-                "Number of countries to display",
-                min_value=5,
-                max_value=min(20, len(country_plot)),
-                value=min(10, len(country_plot)),
-                key="country_top_n"
+            "Number of countries to display",
+            min_value=1,
+            max_value=max(1, min(20, len(filtered_country_plot))),
+            value=max(1, min(10, len(filtered_country_plot))),
+            key="country_top_n"
             )
 
-            top_countries = country_plot.head(country_top_n)
+            top_countries = filtered_country_plot.head(country_top_n)
 
             country_fig = go.Figure(go.Bar(
                 x=top_countries["Total_Sales"],
@@ -659,11 +671,10 @@ else:
 
             st.subheader("Country Sales Details")
             st.dataframe(
-                country_plot.round(2),
-                use_container_width=True,
-                hide_index=True
+            filtered_country_plot.round(2),
+            use_container_width=True,
+            hide_index=True
             )
-
             st.download_button(
                 "Download Country Summary",
                 data=country_plot.to_csv(index=False).encode("utf-8"),
