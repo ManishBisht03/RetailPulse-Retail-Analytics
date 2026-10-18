@@ -40,6 +40,114 @@ if file_path.exists():
         chart_data = df.set_index("Month")[["Total_Sales"]]
         st.line_chart(chart_data)
         st.subheader("Monthly Sales Comparison")
+        
+        # Demand Forecasting
+        st.subheader("Demand Forecasting")
+
+        st.write(
+            "Estimate future monthly recorded sales using "
+            "a linear trend from historical monthly data."
+        )
+
+        forecast_months = st.slider(
+            "Months to forecast",
+            min_value=1,
+            max_value=12,
+            value=6
+        )
+
+        forecast_df = df[["Month", "Total_Sales"]].copy()
+        forecast_df["Month"] = pd.to_datetime(
+            forecast_df["Month"], errors="coerce"
+        )
+        forecast_df["Total_Sales"] = pd.to_numeric(
+            forecast_df["Total_Sales"], errors="coerce"
+        )
+        forecast_df = forecast_df.dropna()
+        forecast_df = forecast_df.sort_values("Month")
+
+        # Forecast only when at least two historical months exist
+        if len(forecast_df) >= 2:
+            forecast_df = forecast_df.groupby(
+                "Month", as_index=False
+            )["Total_Sales"].sum()
+
+            forecast_df["Month_Number"] = range(len(forecast_df))
+
+            slope, intercept = __import__("numpy").polyfit(
+                forecast_df["Month_Number"],
+                forecast_df["Total_Sales"],
+                1
+            )
+
+            future_numbers = range(
+                len(forecast_df),
+                len(forecast_df) + forecast_months
+            )
+
+            future_dates = pd.date_range(
+                start=forecast_df["Month"].max() + pd.offsets.MonthBegin(1),
+                periods=forecast_months,
+                freq="MS"
+            )
+
+            future_sales = [
+                max(0, slope * number + intercept)
+                for number in future_numbers
+            ]
+
+            historical_chart = forecast_df[
+                ["Month", "Total_Sales"]
+            ].copy()
+            historical_chart["Type"] = "Historical"
+
+            future_chart = pd.DataFrame({
+                "Month": future_dates,
+                "Total_Sales": future_sales,
+                "Type": "Forecast"
+            })
+
+            combined_chart = pd.concat(
+                [historical_chart, future_chart],
+                ignore_index=True
+            )
+
+            combined_chart = combined_chart.rename(
+                columns={
+                    "Month": "Month",
+                    "Total_Sales": "Recorded Sales"
+                }
+            )
+
+            st.line_chart(
+                combined_chart,
+                x="Month",
+                y="Recorded Sales",
+                color="Type"
+            )
+
+            st.caption(
+                "Forecasts are estimates based on a linear trend, "
+                "not guaranteed future sales. Filtered historical "
+                "data may change the forecast."
+            )
+
+            st.subheader("Forecast Values")
+            st.dataframe(
+                future_chart[["Month", "Total_Sales"]].rename(
+                    columns={
+                        "Month": "Forecast Month",
+                        "Total_Sales": "Estimated Sales"
+                    }
+                ).style.format({"Estimated Sales": "{:,.2f}"}),
+                use_container_width=True
+            )
+        else:
+            st.info(
+                "At least two valid historical months are needed "
+                "to generate a forecast."
+            )
+
         st.bar_chart(chart_data)
         country_file = Path("retailpulse_country_summary.csv")
         if country_file.exists():
