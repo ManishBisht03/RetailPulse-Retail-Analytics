@@ -940,7 +940,13 @@ else:
                 use_container_width=True,
                 key="product_sales_chart"
             )
-
+            best_product = product_plot.iloc[0]
+            st.info(
+                f"**Top-performing product:** "
+                f"{best_product['Product']} recorded the highest "
+                f"sales of {format_sales(best_product['Total_Sales'])} "
+                "in the product summary."
+            )
             st.subheader("Product Sales Details")
             st.dataframe(
             filtered_product_plot.round(2),
