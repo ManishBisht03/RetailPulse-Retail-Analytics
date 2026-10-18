@@ -282,10 +282,32 @@ if not monthly_df.empty:
             key="end_month"
         )
 
-    filtered_monthly = monthly_df[
-        (monthly_df["Month"].dt.date >= start_date)
-        & (monthly_df["Month"].dt.date <= end_date)
-    ].copy()
+        month_options = ["All"] + (
+        monthly_df["Month"]
+        .dt.strftime("%B %Y")
+        .tolist()
+    )
+    
+    selected_months = st.multiselect(
+        "Select Month",
+        options=month_options,
+        default=["All"],
+        key="month_filter"
+    )
+    
+    if "All" in selected_months:
+        filtered_monthly = monthly_df[
+            (monthly_df["Month"].dt.date >= start_date)
+            & (monthly_df["Month"].dt.date <= end_date)
+        ].copy()
+    else:
+        filtered_monthly = monthly_df[
+            monthly_df["Month"].dt.strftime("%B %Y").isin(
+                selected_months
+            )
+            & (monthly_df["Month"].dt.date >= start_date)
+            & (monthly_df["Month"].dt.date <= end_date)
+        ].copy()
 
     if start_date > end_date:
         st.error("The start month must be before the end month.")
