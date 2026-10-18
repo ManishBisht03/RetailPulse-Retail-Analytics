@@ -745,17 +745,30 @@ else:
                 "Top Product Sales",
                 format_sales(product_plot.iloc[0]["Total_Sales"])
             )
-
-            product_top_n = st.slider(
-                "Number of products to display",
-                min_value=5,
-                max_value=min(20, len(product_plot)),
-                value=min(10, len(product_plot)),
-                key="product_top_n"
+            product_options = ["All"] + product_plot["Product"].tolist()
+            selected_products = st.multiselect(
+            "Select Product",
+            options=product_options,
+            default=["All"],
+            key="product_filter"
             )
 
-            top_products = product_plot.head(product_top_n)
+           if "All" in selected_products:
+               filtered_product_plot = product_plot.copy()
+           else:
+               filtered_product_plot = product_plot[
+               product_plot["Product"].isin(selected_products)
+           ]
+            product_top_n = st.slider(
+            "Number of products to display",
+            min_value=1,
+            max_value=max(1, min(20, len(filtered_product_plot))),
+            value=max(1, min(10, len(filtered_product_plot))),
+            key="product_top_n"
+            )
 
+            top_products = filtered_product_plot.head(product_top_n)
+        
             product_fig = go.Figure(go.Bar(
                 x=top_products["Total_Sales"],
                 y=top_products["Product"],
@@ -784,11 +797,10 @@ else:
 
             st.subheader("Product Sales Details")
             st.dataframe(
-                product_plot.round(2),
-                use_container_width=True,
-                hide_index=True
+            filtered_product_plot.round(2),
+            use_container_width=True,
+            hide_index=True
             )
-
             st.download_button(
                 "Download Product Summary",
                 data=product_plot.to_csv(index=False).encode("utf-8"),
