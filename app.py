@@ -101,14 +101,14 @@ if file_path.exists():
             ].copy()
             historical_chart["Type"] = "Historical"
 
-            future_chart = pd.DataFrame({
+            future_line = pd.DataFrame({
                 "Month": future_dates,
                 "Total_Sales": future_sales,
                 "Type": "Forecast"
             })
 
             combined_chart = pd.concat(
-                [historical_chart, future_chart],
+                [historical_chart, future_line],
                 ignore_index=True
             )
 
@@ -119,11 +119,31 @@ if file_path.exists():
                 }
             )
 
+            
+            historical_chart = forecast_df[
+                ["Month", "Total_Sales"]
+            ].copy()
+
+            historical_chart = historical_chart.rename(
+                columns={"Total_Sales": "Historical Sales"}
+            )
+            historical_chart["Forecast Sales"] = float("nan")
+
+            future_chart = pd.DataFrame({
+                "Month": future_dates,
+                "Historical Sales": float("nan"),
+                "Forecast Sales": future_sales
+            })
+
+            combined_chart = pd.concat(
+                [historical_chart, future_line],
+                ignore_index=True
+            )
+
+            combined_chart = combined_chart.set_index("Month")
+
             st.line_chart(
-                combined_chart,
-                x="Month",
-                y="Recorded Sales",
-                color="Type"
+                combined_chart[["Historical Sales", "Forecast Sales"]]
             )
 
             st.caption(
