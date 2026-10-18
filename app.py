@@ -910,8 +910,7 @@ else:
                 "Select a customer to inspect",
                 options=customer_ids,
                 key="selected_customer"
-                select_all=True
-            )
+                )
 
             selected_row = customer_plot[
                 customer_plot[customer_id_col].astype(str)
