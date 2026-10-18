@@ -154,7 +154,7 @@ if file_path.exists():
 
             st.subheader("Forecast Values")
             st.dataframe(
-                future_chart[["Month", "Total_Sales"]].rename(
+                future_line[["Month", "Forecast Sales"]].rename(
                     columns={
                         "Month": "Forecast Month",
                         "Total_Sales": "Estimated Sales"
