@@ -200,6 +200,34 @@ if file_path.exists():
                         "historical month(s) held out from model fitting. "
                         "Lower MAE indicates closer predictions."
                     )
+                                        # Compare actual and predicted historical sales
+                    st.subheader("Actual vs Predicted Sales")
+
+                    comparison_df = pd.DataFrame({
+                        "Month": test_df["Month"].values,
+                        "Actual Sales": test_df["Total_Sales"].values,
+                        "Predicted Sales": test_predictions
+                    })
+
+                    comparison_df["Month"] = pd.to_datetime(
+                        comparison_df["Month"]
+                    )
+
+                    comparison_chart = comparison_df.set_index("Month")
+
+                    st.line_chart(
+                        comparison_chart[
+                            ["Actual Sales", "Predicted Sales"]
+                        ]
+                    )
+
+                    st.dataframe(
+                        comparison_df.style.format({
+                            "Actual Sales": "{:,.2f}",
+                            "Predicted Sales": "{:,.2f}"
+                        }),
+                        use_container_width=True
+                    )
                 else:
                     st.info(
                         "At least 5 historical months are needed "
