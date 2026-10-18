@@ -808,7 +808,13 @@ else:
                 use_container_width=True,
                 key="country_sales_chart"
             )
-
+            best_country = country_plot.iloc[0]
+            st.info(
+                f"**Top-performing country:** "
+                f"{best_country['Country']} recorded the highest "
+                f"sales of {format_sales(best_country['Total_Sales'])} "
+                "in the country summary."
+            )
             st.subheader("Country Sales Details")
             st.dataframe(
             filtered_country_plot.round(2),
